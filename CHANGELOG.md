@@ -2,7 +2,7 @@
 
 All notable changes to the KStore project will be documented in this file.
 
-## [0.2.0] - 2024-12-16
+## [0.2.0] - 2025-12-16
 
 ### Added
 
