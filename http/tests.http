@@ -1,16 +1,123 @@
+### Health Check
+GET http://localhost:8080/health
+
+### Get Statistics
+GET http://localhost:8080/stats
+
 ### Get all keys
 GET http://localhost:8080/kv/
 
+### Get keys with prefix filter
+GET http://localhost:8080/kv/?prefix=user
+
+### Get keys with limit
+GET http://localhost:8080/kv/?limit=5
+
+### Get keys with prefix and limit
+GET http://localhost:8080/kv/?prefix=session&limit=10
 
 ### Create a new key
-POST http://localhost:8080/kv/some
+POST http://localhost:8080/kv/username
+Content-Type: text/plain
 
-something
+John Doe
 
-### Get a specific key by ID
-GET http://localhost:8080/keys/some
+### Create another key
+POST http://localhost:8080/kv/user:123
+Content-Type: text/plain
+
+{"id": 123, "name": "Alice"}
+
+### Create with prefix
+POST http://localhost:8080/kv/session:abc123
+Content-Type: text/plain
+
+active
+
+### Get a specific key
+GET http://localhost:8080/kv/username
+
+### Get key information
+GET http://localhost:8080/kv/username/info
+
+### Check if key exists
+GET http://localhost:8080/kv/username/exists
+
+### Check if non-existent key exists
+GET http://localhost:8080/kv/nonexistent/exists
+
+### Update an existing key
+PUT http://localhost:8080/kv/username
+Content-Type: text/plain
+
+Jane Doe
+
+### Try to create existing key (should fail with 409)
+POST http://localhost:8080/kv/username
+Content-Type: text/plain
+
+Another Name
+
+### Try to update non-existent key (should fail)
+PUT http://localhost:8080/kv/nonexistent
+Content-Type: text/plain
+
+Some Value
+
+### Search by regex
+GET http://localhost:8080/kv/r/^user
+
+### Search by regex - specific pattern
+GET http://localhost:8080/kv/r/^user:[0-9]+$
+
+### Batch create multiple keys
+POST http://localhost:8080/batch
 Content-Type: application/json
 
+[
+  {
+    "key": "product:1",
+    "value": "Laptop"
+  },
+  {
+    "key": "product:2",
+    "value": "Mouse"
+  },
+  {
+    "key": "product:3",
+    "value": "Keyboard"
+  }
+]
 
-### Delete a key by ID
-DELETE http://localhost:8080/kv/some
+### Get all product keys
+GET http://localhost:8080/kv/?prefix=product
+
+### Delete a specific key
+DELETE http://localhost:8080/kv/username
+
+### Delete all keys with prefix
+DELETE http://localhost:8080/kv/prefix/session
+
+### Delete all product keys
+DELETE http://localhost:8080/kv/prefix/product
+
+### Create backup
+POST http://localhost:8080/backup
+
+### Manual compaction
+POST http://localhost:8080/compact
+
+### Test key size validation (should fail if key > 256 bytes)
+POST http://localhost:8080/kv/this_is_a_very_long_key_name_that_should_be_rejected_if_it_exceeds_the_maximum_allowed_size_of_256_bytes_which_is_configured_in_the_server_constants_this_key_is_intentionally_made_long_to_test_the_validation_logic_and_ensure_proper_error_handling
+Content-Type: text/plain
+
+test value
+
+### Test empty key (should fail)
+POST http://localhost:8080/kv/
+Content-Type: text/plain
+
+test value
+
+### Get non-existent key
+GET http://localhost:8080/kv/does_not_exist
